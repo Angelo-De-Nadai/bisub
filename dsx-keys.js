@@ -1,8 +1,8 @@
-// BiSub keyboard shortcuts (Alt/Option + key). State persists in chrome.storage.local.
+// BiSub keyboard shortcuts. Bindings are set on the settings page; state persists in chrome.storage.local.
 (() => {
-  const KEY = "bisubKeys";
-  const DEF = { all: true, line1: true, line2: true, pinyin: true, zoom: 1, shift: 0 };
-  let st = { ...DEF };
+  const B = globalThis.BISUB;
+  let st = { ...B.STATE_DEFAULT };
+  let binds = { ...B.BIND_DEFAULT };
 
   const css = document.createElement("style");
   css.textContent = [
@@ -24,7 +24,7 @@
     document.documentElement.style.setProperty("--bisub-kzoom", String(st.zoom));
     document.documentElement.style.setProperty("--bisub-kshift", `${st.shift}px`);
   };
-  const save = () => { try { chrome.storage.local.set({ [KEY]: st }); } catch {} };
+  const save = () => { try { chrome.storage.local.set({ [B.STATE_KEY]: st }); } catch {} };
 
   let toastEl = null, toastTimer = 0;
   const toast = (msg, ms = 1200) => {
@@ -36,46 +36,48 @@
     toastTimer = setTimeout(() => { toastEl.style.opacity = "0"; }, ms);
   };
   const onoff = (b) => (b ? "ON" : "OFF");
-  const HELP = [
-    "BiSub shortcuts (Alt / Option +)",
-    "X  subtitles on/off",
-    "1  original line on/off",
-    "2  translation line on/off",
-    "P  pinyin on/off",
-    "↑ / ↓  bigger / smaller",
-    "PgUp / PgDn  move up / down",
-    "0  reset size and position",
-    "H  this help",
-  ].join("\n");
+  const help = () => ["BiSub shortcuts", ...B.ACTIONS.filter((a) => binds[a.id]).map((a) => `${B.label(binds[a.id])}   ${a.label}`)].join("\n");
 
-  const actions = {
-    KeyX: () => { st.all = !st.all; return `Subtitles ${onoff(st.all)}`; },
-    Digit1: () => { st.line1 = !st.line1; return `Original line ${onoff(st.line1)}`; },
-    Digit2: () => { st.line2 = !st.line2; return `Translation line ${onoff(st.line2)}`; },
-    KeyP: () => { st.pinyin = !st.pinyin; return `Pinyin ${onoff(st.pinyin)}`; },
-    ArrowUp: () => { st.zoom = Math.min(3, +(st.zoom + 0.1).toFixed(2)); return `Size ${Math.round(st.zoom * 100)}%`; },
-    ArrowDown: () => { st.zoom = Math.max(0.5, +(st.zoom - 0.1).toFixed(2)); return `Size ${Math.round(st.zoom * 100)}%`; },
-    PageUp: () => { st.shift = Math.min(600, st.shift + 20); return `Position +${st.shift}px`; },
-    PageDown: () => { st.shift = Math.max(-60, st.shift - 20); return `Position ${st.shift >= 0 ? "+" : ""}${st.shift}px`; },
-    Digit0: () => { st.zoom = 1; st.shift = 0; return "Size and position reset"; },
-    KeyH: () => HELP,
+  const run = {
+    all: () => { st.all = !st.all; return `Subtitles ${onoff(st.all)}`; },
+    line1: () => { st.line1 = !st.line1; return `Original line ${onoff(st.line1)}`; },
+    line2: () => { st.line2 = !st.line2; return `Translation line ${onoff(st.line2)}`; },
+    pinyin: () => { st.pinyin = !st.pinyin; return `Pinyin ${onoff(st.pinyin)}`; },
+    bigger: () => { st.zoom = Math.min(3, +(st.zoom + 0.1).toFixed(2)); return `Size ${Math.round(st.zoom * 100)}%`; },
+    smaller: () => { st.zoom = Math.max(0.5, +(st.zoom - 0.1).toFixed(2)); return `Size ${Math.round(st.zoom * 100)}%`; },
+    up: () => { st.shift = Math.min(600, st.shift + 20); return `Position +${st.shift}px`; },
+    down: () => { st.shift = Math.max(-60, st.shift - 20); return `Position ${st.shift >= 0 ? "+" : ""}${st.shift}px`; },
+    reset: () => { st.zoom = 1; st.shift = 0; return "Size and position reset"; },
+    help,
   };
+  const repeatable = new Set(["bigger", "smaller", "up", "down"]);
 
-  const typing = (t) => t instanceof Element && (t.closest("input,textarea,select,[contenteditable]:not([contenteditable=false])") !== null);
+  const typing = (t) => t instanceof Element && t.closest("input,textarea,select,[contenteditable]:not([contenteditable=false])") !== null;
 
   window.addEventListener("keydown", (e) => {
-    if (!e.altKey || e.ctrlKey || e.metaKey || e.repeat && !/Arrow|Page/.test(e.code)) return;
-    const fn = actions[e.code];
-    if (!fn || typing(e.target)) return;
+    const id = B.ACTIONS.map((a) => a.id).find((k) => B.matches(binds[k], e));
+    if (!id || typing(e.target) || (e.repeat && !repeatable.has(id))) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    const msg = fn();
+    const msg = run[id]();
     apply();
-    if (e.code !== "KeyH") save();
-    toast(msg, e.code === "KeyH" ? 5000 : 1200);
+    if (id !== "help") save();
+    toast(msg, id === "help" ? 5000 : 1200);
   }, true);
 
+  const load = (r) => {
+    st = { ...B.STATE_DEFAULT, ...(r?.[B.STATE_KEY] ?? {}) };
+    binds = { ...B.BIND_DEFAULT, ...(r?.[B.BIND_KEY] ?? {}) };
+    apply();
+  };
   try {
-    chrome.storage.local.get(KEY).then((r) => { st = { ...DEF, ...(r?.[KEY] ?? {}) }; apply(); }, apply);
+    chrome.storage.local.get([B.STATE_KEY, B.BIND_KEY]).then(load, () => apply());
+    // Live updates from the settings page.
+    chrome.storage.onChanged.addListener((ch, area) => {
+      if (area !== "local") return;
+      if (ch[B.STATE_KEY]) st = { ...B.STATE_DEFAULT, ...(ch[B.STATE_KEY].newValue ?? {}) };
+      if (ch[B.BIND_KEY]) binds = { ...B.BIND_DEFAULT, ...(ch[B.BIND_KEY].newValue ?? {}) };
+      apply();
+    });
   } catch { apply(); }
 })();
