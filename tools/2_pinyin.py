@@ -11,5 +11,5 @@ p.write_text(s)
 mp = d / "manifest.json"; m = json.loads(mp.read_text())
 for cs in m["content_scripts"]:
     if cs.get("world") == "ISOLATED" and cs["js"] == ["isolated.js"]:
-        cs["js"] = ["pinyin-pro.js", "dsx-pinyin.js", "isolated.js"]
+        cs["js"] = ["pinyin-pro.js", "dsx-pinyin.js", "dsx-keys.js", "isolated.js"]
 mp.write_text(json.dumps(m, indent=2) + "\n")

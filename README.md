@@ -13,6 +13,7 @@ Chrome extension that shows two subtitle lines (original + translation) on YouTu
 | **Synced sentences** | Subtitle fragments are merged into full sentences before translating, so each line and its translation have the same timing and full context. |
 | **Pinyin** | Chinese lines show pinyin above every character (`<ruby>`), generated locally by [pinyin-pro](https://github.com/zh-lx/pinyin-pro) 3.29.5 (MIT), with word-aware tones for polyphones (多音字). |
 | **1 s linger** | A subtitle stays on screen 1 extra second when silence follows, so you can finish reading. |
+| **Keyboard shortcuts** | Alt/Option + key, see below. Settings are remembered. |
 | **No empty bar** | The dark "Text Background" box is hidden when there is no subtitle. |
 
 ## Install (Chrome 150+)
@@ -36,13 +37,30 @@ Chrome shows a "developer mode extensions" notice at startup — that's normal f
 
 The API Key field and "Verify you are not a bot" link are unused leftovers and do nothing.
 
+## Keyboard shortcuts
+
+Hold **Alt** (Windows/Linux) or **Option** (Mac) and press:
+
+| Key | Action |
+|---|---|
+| `S` | Subtitles on / off |
+| `1` | Original line on / off |
+| `2` | Translation line on / off |
+| `P` | Pinyin on / off |
+| `↑` / `↓` | Bigger / smaller text |
+| `PgUp` / `PgDn` (Mac: `fn`+`↑`/`↓`) | Move subtitles up / down |
+| `0` | Reset size and position |
+| `H` | Show shortcut help on screen |
+
+Shortcuts are ignored while typing in a text field (e.g. the YouTube search box).
+
 ## After a code change
 
 `chrome://extensions` → click ↻ on BiSub → reload the video tab.
 
 ## Patch scripts
 
-`tools/` holds the scripts used to build this version from the original package (in order: `1_private_translate.py`, `2_pinyin.py`, `3_linger.py`, after copying `background.js`, `dsx-pinyin.js`, `pinyin-pro.js`). Each asserts its target code exists exactly once, so it fails loudly on a different base version.
+`tools/` holds the scripts used to build this version from the original package (in order: `1_private_translate.py`, `2_pinyin.py`, `3_linger.py`, after copying `background.js`, `dsx-pinyin.js`, `dsx-keys.js`, `pinyin-pro.js`). Each asserts its target code exists exactly once, so it fails loudly on a different base version.
 
 ```bash
 python3 -I tools/1_private_translate.py /path/to/base-copy
@@ -52,7 +70,6 @@ python3 -I tools/1_private_translate.py /path/to/base-copy
 
 - `clients5.google.com` is an unofficial endpoint; it may get rate-limited or change. Fallback idea: a local model via Ollama.
 - No auto-updates (unpacked extension).
-- Pinyin is always on for Chinese lines (no toggle yet).
 
 ## Licences
 
