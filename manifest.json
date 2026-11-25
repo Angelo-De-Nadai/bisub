@@ -65,9 +65,5 @@
   "background": {
     "service_worker": "background.js"
   },
-  "version_name": "2.71.1-private",
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
-  }
+  "version_name": "2.71.1-private"
 }
