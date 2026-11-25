@@ -43,7 +43,7 @@ Hold **Alt** (Windows/Linux) or **Option** (Mac) and press:
 
 | Key | Action |
 |---|---|
-| `S` | Subtitles on / off |
+| `X` | Subtitles on / off |
 | `1` | Original line on / off |
 | `2` | Translation line on / off |
 | `P` | Pinyin on / off |
@@ -52,7 +52,7 @@ Hold **Alt** (Windows/Linux) or **Option** (Mac) and press:
 | `0` | Reset size and position |
 | `H` | Show shortcut help on screen |
 
-Shortcuts are ignored while typing in a text field (e.g. the YouTube search box).
+Only Alt/Option combinations are used, so the sites' own shortcuts (YouTube's `C`, `F`, `K`, `J`/`L`, arrows, etc.) keep working. Shortcuts are ignored while typing in a text field (e.g. the YouTube search box).
 
 ## After a code change
 

@@ -38,7 +38,7 @@
   const onoff = (b) => (b ? "ON" : "OFF");
   const HELP = [
     "BiSub shortcuts (Alt / Option +)",
-    "S  subtitles on/off",
+    "X  subtitles on/off",
     "1  original line on/off",
     "2  translation line on/off",
     "P  pinyin on/off",
@@ -49,7 +49,7 @@
   ].join("\n");
 
   const actions = {
-    KeyS: () => { st.all = !st.all; return `Subtitles ${onoff(st.all)}`; },
+    KeyX: () => { st.all = !st.all; return `Subtitles ${onoff(st.all)}`; },
     Digit1: () => { st.line1 = !st.line1; return `Original line ${onoff(st.line1)}`; },
     Digit2: () => { st.line2 = !st.line2; return `Translation line ${onoff(st.line2)}`; },
     KeyP: () => { st.pinyin = !st.pinyin; return `Pinyin ${onoff(st.pinyin)}`; },
