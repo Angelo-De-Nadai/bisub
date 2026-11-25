@@ -2,8 +2,6 @@
 
 Chrome extension that shows two subtitle lines (original + translation) on YouTube, iQ, Viki, Youku, WeTV and iflix, with pinyin above Chinese characters.
 
-> ⚠️ **Private repository, personal use only.** Part of this code is third-party, all rights reserved by its original authors. Do not make this repo public or redistribute it.
-
 ## Features
 
 | Feature | Details |
