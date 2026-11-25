@@ -2,6 +2,15 @@
 
 Chrome extension that shows two subtitle lines (original + translation) on YouTube, iQ, Viki, Youku, WeTV and iflix, with pinyin above Chinese characters.
 
+## Install (Chrome 150+)
+
+1. Clone or download this repo to a permanent folder, e.g. `~/ChromeExtensions/bisub`.
+2. Open `chrome://extensions` and turn on **Developer mode** (top right).
+3. Click **Load unpacked** and select the folder.
+4. Pin the BiSub icon in the toolbar.
+
+Chrome shows a "developer mode extensions" notice at startup — that's normal for unpacked extensions.
+
 ## Features
 
 | Feature | Details |
@@ -14,15 +23,6 @@ Chrome extension that shows two subtitle lines (original + translation) on YouTu
 | **Keyboard shortcuts** | Default Alt/Option + key, fully remappable in the popup's Pinyin & Keys tab. Settings are remembered. |
 | **Pinyin & Keys tab** | Pinyin on/off and shortcut remapping. |
 | **No empty bar** | The dark "Text Background" box is hidden when there is no subtitle. |
-
-## Install (Chrome 150+)
-
-1. Clone or download this repo to a permanent folder, e.g. `~/ChromeExtensions/bisub`.
-2. Open `chrome://extensions` and turn on **Developer mode** (top right).
-3. Click **Load unpacked** and select the folder.
-4. Pin the BiSub icon in the toolbar.
-
-Chrome shows a "developer mode extensions" notice at startup — that's normal for unpacked extensions.
 
 ## Usage
 
@@ -81,5 +81,4 @@ python3 -I tools/1_private_translate.py /path/to/base-copy
 
 ## Licences
 
-- pinyin-pro: MIT, see `pinyin-pro.LICENSE`.
-- Remaining third-party code: all rights reserved by its original authors — personal use only.
+- MIT, see `pinyin-pro.LICENSE`.
